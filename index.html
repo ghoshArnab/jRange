@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>jRange : jQuery Range Selector</title>
+    <link rel="stylesheet" href="assets/jquery.range.css">
+    <script src="assets/jquery.min.js"></script>
+</head>
+
+<body>
+    <!-- <input class="range-slider" type="hidden" value="25,75" /> -->
+    <div class="slider-container" value="25,75">
+        <div class="back-bar">
+            <div class="selected-bar"></div>
+            <div class="pointer low"></div>
+            <div class="pointer-label low">123456</div>
+            <div class="pointer high"></div>
+            <div class="pointer-label high">456789</div>
+            <div class="clickable-dummy"></div>
+        </div>
+        <div class="scale"></div>
+    </div>
+    <script src="assets/jquery.range.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+
+        $('.slider-container').jRange({
+            from: 0,
+            to: 100,
+            step: 1,
+            scale: [0, 25, 50, 75, 100],
+            format: '%s',
+            width: 300,
+            showLabels: true,
+            isRange: true
+        });
+    });
+    </script>
+</body>
+
+</html>
