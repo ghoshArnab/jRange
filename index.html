@@ -9,29 +9,35 @@
 </head>
 
 <body>
-    <!-- <input class="range-slider" type="hidden" value="25,75" /> -->
-    <div class="slider-container" value="25,75">
-        <div class="back-bar">
-            <div class="selected-bar"></div>
-            <div class="pointer low"></div>
-            <div class="pointer-label low">123456</div>
-            <div class="pointer high"></div>
-            <div class="pointer-label high">456789</div>
-            <div class="clickable-dummy"></div>
+    <div class="slider-container">
+        <div class="slider-buttons">
+            <a href="#" class="left"></a>
         </div>
-        <div class="scale"></div>
+        <div class="slider-main" data-value="5,75">
+            <div class="back-bar">
+                <div class="selected-bar"></div>
+                <div class="pointer low"></div>
+                <div class="pointer-label low">123456</div>
+                <div class="pointer high"></div>
+                <div class="pointer-label high">456789</div>
+                <div class="bar-body"></div>
+            </div>
+            <div class="scale"></div>
+        </div>
+        <div class="slider-buttons">
+            <a href="#" class="right"></a>
+        </div>
     </div>
     <script src="assets/jquery.range.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-
-        $('.slider-container').jRange({
+        $('.slider-main').jRange({
             from: 0,
             to: 100,
             step: 1,
             scale: [0, 25, 50, 75, 100],
             format: '%s',
-            width: 300,
+            width: 500,
             showLabels: true,
             isRange: true
         });
