@@ -1,22 +1,3 @@
-/*jshint multistr:true, curly: false */
-/*global jQuery:false, define: false */
-/**
- * jRange - Awesome range control
- *
- * Written by
- * ----------
- * Nitin Hayaran (nitinhayaran@gmail.com)
- *
- * Licensed under the MIT (MIT-LICENSE.txt).
- *
- * @author Nitin Hayaran
- * @version 0.1-RELEASE
- *
- * Dependencies
- * ------------
- * jQuery (http://jquery.com)
- *
- **/
 ;
 (function ($, window, document, undefined) {
     'use strict';
@@ -28,14 +9,13 @@
             onstatechange: function () {},
             ondragend: function () {},
             onbarclicked: function () {},
-            isRange: false,
+            isRange: true,
             showLabels: true,
             showScale: true,
             step: 1,
-            format: '%s',
             width: 500,
             disable: false,
-            snap: false
+            snap: true
         },
         init: function (node, options) {
             this.options = $.extend({}, this.defaults, options);
@@ -53,6 +33,7 @@
             this.bar = $('.selected-bar', this.sliderNode);
             this.clickableBar = this.sliderNode.find('.bar-body');
             this.decreaseSlider = this.sliderContainer.find('.left');
+            this.increaseSlider = this.sliderContainer.find('.right');
             this.interval = this.options.to - this.options.from;
             this.render();
         },
@@ -64,11 +45,6 @@
             } else {
                 this.options.width = this.options.width || this.sliderNode.width();
                 this.sliderNode.width(this.options.width);
-                //this.inputNode.hide();
-            }
-            if (this.isSingle()) {
-                this.lowPointer.hide();
-                this.lowLabel.hide();
             }
             if (!this.options.showLabels) {
                 this.labels.hide();
@@ -79,15 +55,10 @@
             }
             this.setValue(this.options.value);
         },
-        isSingle: function () {
-            if (typeof (this.options.value) === 'number') {
-                return true;
-            }
-            return (this.options.value.indexOf(',') !== -1 || this.options.isRange) ? false : true;
-        },
         attachEvents: function () {
             this.clickableBar.click($.proxy(this.barClicked, this));
             this.decreaseSlider.click($.proxy(this.leftClicked, this));
+            this.increaseSlider.click($.proxy(this.rightClicked, this));
             this.pointers.on('mousedown touchstart', $.proxy(this.onDragStart, this));
             this.pointers.bind('dragstart', function (event) {
                 event.preventDefault();
@@ -126,45 +97,47 @@
         barClicked: function (e) {
             if (this.options.disable) return;
             var x = e.pageX - this.clickableBar.offset().left;
-            if (this.isSingle()) this.setPosition(this.pointers.last(), x, true, true);
-            else {
-                var firstLeft = Math.abs(parseFloat(this.pointers.first().css('left'), 10)),
-                    firstHalfWidth = this.pointers.first().width() / 2,
-                    lastLeft = Math.abs(parseFloat(this.pointers.last().css('left'), 10)),
-                    lastHalfWidth = this.pointers.first().width() / 2,
-                    leftSide = Math.abs(firstLeft - x + firstHalfWidth),
-                    rightSide = Math.abs(lastLeft - x + lastHalfWidth),
-                    pointer;
-                if (leftSide == rightSide) {
-                    pointer = x < firstLeft ? this.pointers.first() : this.pointers.last();
-                } else {
-                    pointer = leftSide < rightSide ? this.pointers.first() : this.pointers.last();
-                }
-                this.setPosition(pointer, x, true, true);
+            var firstLeft = Math.abs(parseFloat(this.pointers.first().css('left'), 10)),
+                firstHalfWidth = this.pointers.first().width() / 2,
+                lastLeft = Math.abs(parseFloat(this.pointers.last().css('left'), 10)),
+                lastHalfWidth = this.pointers.first().width() / 2,
+                leftSide = Math.abs(firstLeft - x + firstHalfWidth),
+                rightSide = Math.abs(lastLeft - x + lastHalfWidth),
+                pointer;
+            if (leftSide == rightSide) {
+                pointer = x < firstLeft ? this.pointers.first() : this.pointers.last();
+            } else {
+                pointer = leftSide < rightSide ? this.pointers.first() : this.pointers.last();
             }
+            this.setPosition(pointer, x, true, true);
             this.options.onbarclicked.call(this, this.options.value);
         },
         leftClicked: function (e) {
             if (this.options.disable) return;
             var firstLeft = Math.abs(parseFloat(this.pointers.first().css('left'), 10)),
                 firstHalfWidth = this.pointers.first().width() / 2,
-                lastLeft = Math.abs(parseFloat(this.pointers.last().css('left'), 10)),
-                lastHalfWidth = this.pointers.first().width() / 2,
-                leftSide = Math.abs(firstLeft + firstHalfWidth),
-                rightSide = Math.abs(lastLeft + lastHalfWidth);
+                leftSide = Math.abs(firstLeft + firstHalfWidth);
             this.setPosition(this.pointers.first(), leftSide - 50, true, true);
-            if(leftSide < this.clickableBar.offset().left){
+            if (leftSide < this.clickableBar.offset().left) {
                 alert('ss');
             }
+        },
+        rightClicked: function (e) {
+            if (this.options.disable) return;
+            var lastLeft = Math.abs(parseFloat(this.pointers.last().css('left'), 10)),
+                lastHalfWidth = this.pointers.first().width() / 2,
+                rightSide = Math.abs(lastLeft + lastHalfWidth);
+            this.setPosition(this.pointers.last(), rightSide + 50, true, true);
+            /*if(rightSide < this.clickableBar.offset().left){
+                alert('ss');
+            }*/
         },
         onChange: function (e, self, pointer, position) {
             var min, max;
             min = 0;
             max = self.sliderNode.width();
-            if (!self.isSingle()) {
-                min = pointer.hasClass('high') ? parseFloat(self.lowPointer.css("left")) + (self.lowPointer.width() / 2) : 0;
-                max = pointer.hasClass('low') ? parseFloat(self.highPointer.css("left")) + (self.highPointer.width() / 2) : self.sliderNode.width();
-            }
+            min = pointer.hasClass('high') ? parseFloat(self.lowPointer.css("left")) + (self.lowPointer.width() / 2) : 0;
+            max = pointer.hasClass('low') ? parseFloat(self.highPointer.css("left")) + (self.highPointer.width() / 2) : self.sliderNode.width();
             var value = Math.min(Math.max(position, min), max);
             self.setPosition(pointer, value, true);
         },
@@ -192,12 +165,8 @@
             pointer[animate ? 'animate' : 'css']({
                 'left': Math.round(position - circleWidth)
             });
-            if (this.isSingle()) {
-                leftPos = 0;
-            } else {
-                leftPos = lowPos + circleWidth;
-                rightPos = highPos + circleWidth;
-            }
+            leftPos = lowPos + circleWidth;
+            rightPos = highPos + circleWidth;
             var w = Math.round(highPos + circleWidth - leftPos);
             this.bar[animate ? 'animate' : 'css']({
                 'width': Math.abs(w),
@@ -225,12 +194,8 @@
             }
             this.options.value = value;
             var prc = this.valuesToPrc(values.length === 2 ? values : [0, values[0]]);
-            if (this.isSingle()) {
-                this.setPosition(this.highPointer, prc[1]);
-            } else {
-                this.setPosition(this.lowPointer, prc[0]);
-                this.setPosition(this.highPointer, prc[1]);
-            }
+            this.setPosition(this.lowPointer, prc[0]);
+            this.setPosition(this.highPointer, prc[1]);
         },
         renderScale: function () {
             var s = this.options.scale || [this.options.from, this.options.to];
@@ -246,26 +211,10 @@
                 });
             });
         },
-        getBarWidth: function () {
-            var values = this.options.value.split(',');
-            if (values.length > 1) {
-                return parseFloat(values[1]) - parseFloat(values[0]);
-            } else {
-                return parseFloat(values[0]);
-            }
-        },
         showPointerValue: function (pointer, position, animate) {
             var label = $('.pointer-label', this.sliderNode)[pointer.hasClass('low') ? 'first' : 'last']();
-            var text;
             var value = this.positionToValue(position);
-            // Is it higer or lower than it should be?
-            if ($.isFunction(this.options.format)) {
-                var type = this.isSingle() ? undefined : (pointer.hasClass('low') ? 'low' : 'high');
-                text = this.options.format(value, type);
-            } else {
-                text = this.options.format.replace('%s', value);
-            }
-            var width = label.html(text).width(),
+            var width = label.html(value.toString()).width(),
                 left = position - width / 2;
             left = Math.min(Math.max(left, 0), this.options.width - width);
             label[animate ? 'animate' : 'css']({
@@ -307,15 +256,11 @@
         },
         setInputValue: function (pointer, v) {
             // if(!isChanged) return;
-            if (this.isSingle()) {
-                this.options.value = v.toString();
+            var values = this.options.value.split(',');
+            if (pointer.hasClass('low')) {
+                this.options.value = v + ',' + values[1];
             } else {
-                var values = this.options.value.split(',');
-                if (pointer.hasClass('low')) {
-                    this.options.value = v + ',' + values[1];
-                } else {
-                    this.options.value = values[0] + ',' + v;
-                }
+                this.options.value = values[0] + ',' + v;
             }
             if (this.sliderNode.data('value') !== this.options.value) {
                 this.sliderNode.data('value', this.options.value);
@@ -323,65 +268,17 @@
                 this.options.onstatechange.call(this, this.options.value);
             }
         },
-        getValue: function () {
-            return this.options.value;
-        },
-        getOptions: function () {
-            return this.options;
-        },
-        getRange: function () {
-            return this.options.from + "," + this.options.to;
-        },
         isReadonly: function () {
             this.sliderNode.toggleClass('slider-readonly', this.options.disable);
         },
         disable: function () {
             this.options.disable = true;
             this.isReadonly();
-        },
-        enable: function () {
-            this.options.disable = false;
-            this.isReadonly();
-        },
-        toggleDisable: function () {
-            this.options.disable = !this.options.disable;
-            this.isReadonly();
-        },
-        updateRange: function (range, value) {
-            var values = range.toString().split(',');
-            this.interval = parseInt(values[1]) - parseInt(values[0]);
-            if (value) {
-                this.setValue(value);
-            } else {
-                this.setValue(this.getValue());
-            }
         }
     };
-    var pluginName = 'jRange';
-    // A really lightweight plugin wrapper around the constructor,
-    // preventing against multiple instantiations
-    $.fn[pluginName] = function (option) {
-        var args = arguments,
-            result;
-        this.each(function () {
-            var $this = $(this),
-                data = $.data(this, 'plugin_' + pluginName),
-                options = typeof option === 'object' && option;
-            if (!data) {
-                $this.data('plugin_' + pluginName, (data = new jRange(this, options)));
-                $(window).resize(function () {
-                    data.setValue(data.getValue());
-                }); // Update slider position when window is resized to keep it in sync with scale
-            }
-            // if first argument is a string, call silimarly named function
-            // this gives flexibility to call functions of the plugin e.g.
-            //   - $('.dial').plugin('destroy');
-            //   - $('.dial').plugin('render', $('.new-child'));
-            if (typeof option === 'string') {
-                result = data[option].apply(data, Array.prototype.slice.call(args, 1));
-            }
-        });
-        // To enable plugin returns values
-        return result || this;
+    $.fn.jRange = function (option) {
+        var $this = $(this),
+            options = typeof option === 'object' && option;
+        $this.data(new jRange(this, options));
     };
 })(jQuery, window, document);
