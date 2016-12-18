@@ -14,8 +14,7 @@
             showScale: true,
             step: 1,
             width: 500,
-            disable: false,
-            snap: true
+            disable: false
         },
         init: function (node, options) {
             this.options = $.extend({}, this.defaults, options);
@@ -143,14 +142,6 @@
             if (!isPx) {
                 position = this.prcToPx(position);
             }
-            if (this.options.snap) {
-                var expPos = this.correctPositionForSnap(position);
-                if (expPos === -1) {
-                    return;
-                } else {
-                    position = expPos;
-                }
-            }
             if (pointer[0] === this.highPointer[0]) {
                 highPos = Math.round(position - circleWidth);
             } else {
@@ -169,17 +160,6 @@
             this.showPointerValue(pointer, position, animate);
             this.isReadonly();
         },
-        correctPositionForSnap: function (position) {
-            var currentValue = this.positionToValue(position) - this.options.from;
-            var diff = this.options.width / (this.interval / this.options.step),
-                expectedPosition = (currentValue / this.options.step) * diff;
-            if (position <= expectedPosition + diff / 2 && position >= expectedPosition - diff / 2) {
-                return expectedPosition;
-            } else {
-                return -1;
-            }
-        },
-        // will be called from outside
         setValue: function (value) {
             var values = value.toString().split(',');
             values[0] = Math.min(Math.max(values[0], this.options.from), this.options.to) + '';
@@ -208,7 +188,7 @@
         showPointerValue: function (pointer, position, animate) {
             var label = $('.pointer-label', this.sliderNode)[pointer.hasClass('low') ? 'first' : 'last']();
             var value = this.positionToValue(position);
-            var width = label.html(value.toString()).width(),
+            var width = label.html(""+value).width(),
                 left = position - width / 2;
             left = Math.min(Math.max(left, 0), this.options.width - width);
             label[animate ? 'animate' : 'css']({
@@ -249,7 +229,6 @@
             }
         },
         setInputValue: function (pointer, v) {
-            // if(!isChanged) return;
             var values = this.options.value.split(',');
             if (pointer.hasClass('low')) {
                 this.options.value = v + ',' + values[1];
@@ -258,7 +237,6 @@
             }
             if (this.sliderNode.data('value') !== this.options.value) {
                 this.sliderNode.data('value', this.options.value);
-                //this.sliderNode.trigger('change');
                 this.options.onstatechange.call(this, this.options.value);
             }
         },
@@ -271,8 +249,6 @@
         }
     };
     $.fn.sliderControl = function (option) {
-        var $this = $(this),
-            options = typeof option === 'object' && option;
-        $this.data(new sliderControl(this, options));
+        $(this).data(new sliderControl(this, option));
     };
 })(jQuery, window, document);
