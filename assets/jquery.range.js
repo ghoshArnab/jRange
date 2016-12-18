@@ -1,10 +1,10 @@
 ;
 (function ($, window, document, undefined) {
     'use strict';
-    var jRange = function () {
+    var sliderControl = function () {
         return this.init.apply(this, arguments);
     };
-    jRange.prototype = {
+    sliderControl.prototype = {
         defaults: {
             onstatechange: function () {},
             ondragend: function () {},
@@ -38,14 +38,8 @@
             this.render();
         },
         render: function () {
-            // Check if inputNode is visible, and have some width, so that we can set slider width accordingly.
-            if (this.sliderNode.width() === 0 && !this.options.width) {
-                console.log('jRange : no width found, returning');
-                return;
-            } else {
-                this.options.width = this.options.width || this.sliderNode.width();
-                this.sliderNode.width(this.options.width);
-            }
+            this.options.width = this.options.width || this.sliderNode.width();
+            this.sliderNode.width(this.options.width);
             if (!this.options.showLabels) {
                 this.labels.hide();
             }
@@ -276,9 +270,9 @@
             this.isReadonly();
         }
     };
-    $.fn.jRange = function (option) {
+    $.fn.sliderControl = function (option) {
         var $this = $(this),
             options = typeof option === 'object' && option;
-        $this.data(new jRange(this, options));
+        $this.data(new sliderControl(this, options));
     };
 })(jQuery, window, document);

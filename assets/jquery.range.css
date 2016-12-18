@@ -1,54 +1,4 @@
-.back-bar .focused.pointer:before,
-.back-bar .focused.pointer:after {
-    background: #64a8f9;
-}
-.back-bar .pointer:after {
-    left: 17px;
-}
-.back-bar .pointer:before,
-.back-bar .pointer:after {
-    background: #E8E7E6;
-    content: "";
-    display: block;
-    height: 1em;
-    left: 14px;
-    position: absolute;
-    top: 8px;
-    width: 1px;
-}
-.left,
-.right {
-    background: #558FD8;
-    border-radius: 50%;
-    display: inline-block;
-    height: 3em;
-    margin-right: 1em;
-    width: 3em;
-}
-.left:after,
-.right:after {
-    border-right: .5em solid #eee;
-    border-top: .5em solid #eee;
-    content: '';
-    display: inline-block;
-    height: .8em;
-    margin-left: .3em;
-    margin-top: .8em;
-    transform: rotate(-135deg);
-    width: .8em;
-}
-.right {
-    margin-left: 1em;
-}
-.right:after {
-    margin-left: -.3em;
-    transform: rotate(45deg);
-}
-.slider-buttons {
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-}
+/* slider */
 .slider-main {
     display: inline-block;
     vertical-align: middle;
@@ -126,6 +76,59 @@
 .slider-main.slider-readonly .bar-body,
 .slider-main.slider-readonly .pointer {
     cursor: auto;
+}
+.slider-buttons {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+}
+.back-bar .pointer:before,
+.back-bar .pointer:after {
+    background: #E8E7E6;
+    content: "";
+    display: block;
+    height: 1em;
+    left: 14px;
+    position: absolute;
+    top: 8px;
+    width: 1px;
+}
+.back-bar .focused.pointer:before,
+.back-bar .focused.pointer:after {
+    background: #64a8f9;
+}
+.back-bar .pointer:after {
+    left: 17px;
+}
+
+/* nav buttons */
+.left,
+.right {
+    background: #558FD8;
+    border-radius: 50%;
+    display: inline-block;
+    height: 3em;
+    margin-right: 1em;
+    width: 3em;
+}
+.left:after,
+.right:after {
+    border-right: .5em solid #eee;
+    border-top: .5em solid #eee;
+    content: '';
+    display: inline-block;
+    height: .8em;
+    margin-left: .3em;
+    margin-top: .8em;
+    transform: rotate(-135deg);
+    width: .8em;
+}
+.right {
+    margin-left: 1em;
+}
+.right:after {
+    margin-left: -.3em;
+    transform: rotate(45deg);
 }
 a:hover.left,
 a:hover.right {
